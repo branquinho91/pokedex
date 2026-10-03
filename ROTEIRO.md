@@ -352,4 +352,4 @@ curl -i https://pokeapi.co/api/v2/pokemon/naoexiste    # olhar o status
 
 Olhar o código com calma: o que ficou bom, o que refatorar. Ideias para depois: cache em memória, a lib `rich` para deixar a saída bonita, `typer`/`argparse` para comandos diretos (`pokedex search pikachu`), unidades imperiais (ft/in, lb) como `@property` calculada a partir de metro/kg (guardar uma unidade só).
 
-**Documentação:** escrever o `README.md` (o que é, como instalar, rodar e testar) e passar o essencial da spec para markdown (`docs/spec.md`). O PDF já saiu do repo depois do MVP (está no histórico, commit `65d7468`).
+**Documentação:** escrever o `README.md` (o que é, funcionalidades, como instalar, rodar e testar, e as decisões de design: camadas model/mapper/service/cli e o porquê). Sem `spec.md` separado, para não ter duas fontes descrevendo a mesma coisa. O PDF já saiu do repo (está no histórico, commit `65d7468`).
