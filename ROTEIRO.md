@@ -15,7 +15,7 @@ Roteiro de estudo para construir a Pokedex CLI da spec (`pokedex_mvp_spec.pdf`),
 
 ## 📍 Onde paramos
 
-**Etapa 1 concluída.** Próximo: **Etapa 2** (primeiro script "sujo").
+**Etapa 2 concluída.** Próximo: **Etapa 3** (model `Pokemon`).
 
 **Para retomar com o Claude:** "li o ROTEIRO.md, vamos seguir de onde paramos".
 
@@ -63,6 +63,11 @@ pip install -r requirements.txt
 | `npm install` | `pip install -r requirements.txt` |
 | instala local por padrão | instala **global** por padrão, por isso existe o venv |
 | atualiza o package.json sozinho | **não** atualiza o requirements.txt: você edita (ou usa `pip freeze`) |
+| `axios` | `requests` |
+| `await axios.get(url)` | `requests.get(url)` (síncrono, sem `await`) |
+| `res.data` / `res.status` | `res.json()` / `res.status_code` |
+| `{ params: {...} }` | `params={...}` |
+| 4xx/5xx lança exceção sozinho | **não** lança: chamar `res.raise_for_status()` |
 
 ---
 
@@ -159,7 +164,7 @@ curl -i https://pokeapi.co/api/v2/pokemon/naoexiste    # olhar o status
 ---
 
 ## Etapa 2: Primeiro script "sujo"
-- [ ] Concluída
+- [x] Concluída
 
 **Objetivo:** fazer a primeira requisição em Python, sem se preocupar com organização.
 
@@ -170,6 +175,13 @@ curl -i https://pokeapi.co/api/v2/pokemon/naoexiste    # olhar o status
 **Para refletir:**
 - O que acontece se o Pokémon não existir? E se a internet cair?
 - Que problemas esse script teria se crescesse?
+
+**O que aprendemos:**
+- Traceback se lê **de baixo pra cima**: tipo do erro → código → arquivo e linha.
+- Com 404, o script quebra **longe da causa**: o `requests.get` e o `.json()` passam, e só estoura `KeyError: 'name'` na linha 13. A mensagem não ajuda ninguém.
+- **404/500** = o servidor **respondeu** com erro (tem status). **Sem internet/DNS** = **não houve resposta**: o `requests.get` lança `ConnectionError` na hora, sem status nenhum.
+- Sem `timeout`, um servidor que aceita a conexão e nunca responde trava o script **para sempre** (testado: `ReadTimeout` com `timeout=3`; sem timeout, ficou esperando). Regra: toda requisição leva `timeout`.
+- O script mistura 4 trabalhos (input, HTTP, regras dos dados, print). Crescendo, isso dá repetição, mudança espalhada, teste difícil e zero reuso. Daí as camadas model / service / cli.
 
 ---
 
