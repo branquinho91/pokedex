@@ -23,3 +23,23 @@ class Pokemon:
     types: list[str]
     abilities: list[str]
     stats: list[Stat]
+
+
+@dataclass
+class PokemonSummary:
+    """Item da listagem: a API só manda nome + link, sem detalhes."""
+
+    id: int
+    name: str
+
+
+@dataclass
+class PokemonPage:
+    """Uma página da listagem paginada."""
+
+    results: list[PokemonSummary]
+    total: int  # quantos Pokémon existem na API ao todo
+    offset: int  # quantos foram pulados antes desta página
+    limit: int  # tamanho da página
+    has_next: bool
+    has_previous: bool

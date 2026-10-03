@@ -3,7 +3,7 @@
 É o único lugar do app que conhece o formato do JSON da PokeAPI.
 Se a API mudar, a correção fica aqui.
 """
-from pokedex.models.pokemon import Pokemon, Stat
+from pokedex.models.pokemon import Pokemon, PokemonPage, PokemonSummary, Stat
 
 
 def pokemon_from_api(data: dict) -> Pokemon:
@@ -18,3 +18,24 @@ def pokemon_from_api(data: dict) -> Pokemon:
         abilities=[a["ability"]["name"] for a in data["abilities"]],
         stats=[Stat(name=s["stat"]["name"], value=s["base_stat"]) for s in data["stats"]],
     )
+
+
+def page_from_api(data: dict, offset: int, limit: int) -> PokemonPage:
+    """Monta uma PokemonPage a partir do JSON de /api/v2/pokemon?offset=&limit=."""
+    return PokemonPage(
+        results=[
+            PokemonSummary(id=_id_from_url(r["url"]), name=r["name"])
+            for r in data["results"]
+        ],
+        total=data["count"],
+        offset=offset,
+        limit=limit,
+        # next/previous vêm null (None) quando não existe a página
+        has_next=data["next"] is not None,
+        has_previous=data["previous"] is not None,
+    )
+
+
+def _id_from_url(url: str) -> int:
+    """'https://pokeapi.co/api/v2/pokemon/25/' -> 25"""
+    return int(url.rstrip("/").split("/")[-1])

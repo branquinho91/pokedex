@@ -15,7 +15,7 @@ Roteiro de estudo para construir a Pokedex CLI da spec (`pokedex_mvp_spec.pdf`),
 
 ## 📍 Onde paramos
 
-**Etapa 3 concluída.** Próximo: **Etapa 4** (service `PokeAPIClient`).
+**Etapa 4 concluída.** Próximo: **Etapa 5** (tratamento de erros).
 
 **Para retomar com o Claude:** "li o ROTEIRO.md, vamos seguir de onde paramos".
 
@@ -216,13 +216,13 @@ curl -i https://pokeapi.co/api/v2/pokemon/naoexiste    # olhar o status
 ---
 
 ## Etapa 4: Service `PokeAPIClient`
-- [ ] Concluída
+- [x] Concluída
 
 **Objetivo:** concentrar toda a comunicação HTTP num só lugar.
 
 **Conceitos:** separação de responsabilidades, `requests.Session`, timeout, módulos e imports absolutos, retorno tipado.
 
-**Arquivos:** `pokedex/services/pokeapi.py`
+**Arquivos:** `pokedex/services/pokeapi.py` (+ `PokemonSummary`/`PokemonPage` no model e `page_from_api` no mapper)
 
 **Métodos:**
 - `get_pokemon(name_or_id) -> Pokemon`
@@ -231,6 +231,17 @@ curl -i https://pokeapi.co/api/v2/pokemon/naoexiste    # olhar o status
 **Para refletir:**
 - Por que normalizar a entrada (`.strip().lower()`) aqui?
 - Por que **todo** request precisa de timeout?
+
+**O que aprendemos:**
+- `self` é o `this`, mas declarado explicitamente. `__init__` é o construtor. `BASE_URL` em maiúsculas é atributo de classe (constante).
+- Classe × função: o cliente **guarda estado** (URL, timeout, sessão), então é classe. O mapper não guarda nada, então é função.
+- `requests.Session` reaproveita a conexão entre requisições.
+- `_get` é o **funil**: toda requisição passa por ele, então timeout e `raise_for_status()` ficam num lugar só. O `_` no nome indica "uso interno" (convenção, não regra).
+- Timeout no `__init__`: é configuração decidida uma vez, e quem chama não tem como esquecer. Igual ao `axios.create({ timeout })`.
+- Normalizar (`.strip().lower()`) no service: a regra é **da API**, então todo mundo que usa o cliente ganha de graça.
+- `raise_for_status()` faz o 404 estourar perto da causa (`HTTPError: 404 Not Found`), e não mais como `KeyError` lá na frente.
+- O id da listagem vem da **URL**, não de `offset + posição`: depois do 1025 vêm as formas alternativas, com ids a partir de 10001.
+- Buraco conhecido para a Etapa 5: entrada vazia vira `/pokemon/` (a listagem) e o mapper quebra.
 
 ---
 
