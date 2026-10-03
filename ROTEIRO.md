@@ -1,6 +1,6 @@
 # Roteiro: Pokedex CLI
 
-Roteiro de estudo para construir a Pokedex CLI da spec (`pokedex_mvp_spec.pdf`, removido do repo após o MVP; recuperar com `git show 65d7468:pokedex_mvp_spec.pdf > spec.pdf`), uma etapa por vez.
+Roteiro de estudo para construir a Pokedex CLI da spec (`pokedex_mvp_spec.pdf`, removido do repo após o MVP; recuperar com `git show 3e302ec:pokedex_mvp_spec.pdf > spec.pdf`), uma etapa por vez.
 
 **Como funciona cada etapa:**
 1. Explicação do objetivo e do porquê
@@ -334,7 +334,7 @@ curl -i https://pokeapi.co/api/v2/pokemon/naoexiste    # olhar o status
 - Os dois são tratados no `main.py`, a borda mais externa: um `try` só pega o Ctrl+C de qualquer `input()`, porque a exceção sobe até lá.
 - `if __name__ == "__main__":` roda só quando o arquivo é executado, não quando é importado. Assim `import main` num teste não abre o menu.
 - Checklist automatizado: "sem rede" simulado com `HTTPS_PROXY` para uma porta fechada, e Ctrl+C com `SIGINT` real no processo.
-- `rascunho.py` apagado (continua no histórico, commit `fb386be`).
+- `rascunho.py` apagado (continua no histórico, commit `a98bdef`).
 
 ---
 
@@ -368,4 +368,4 @@ curl -i https://pokeapi.co/api/v2/pokemon/naoexiste    # olhar o status
 
 Olhar o código com calma: o que ficou bom, o que refatorar. Ideias para depois: cache em memória, a lib `rich` para deixar a saída bonita, `typer`/`argparse` para comandos diretos (`pokedex search pikachu`), unidades imperiais (ft/in, lb) como `@property` calculada a partir de metro/kg (guardar uma unidade só).
 
-**Documentação:** ✅ `README.md` escrito (o que é, funcionalidades, como instalar, rodar e testar, e as decisões de design: camadas model/mapper/service/cli e o porquê). Sem `spec.md` separado, para não ter duas fontes descrevendo a mesma coisa. O PDF já saiu do repo (está no histórico, commit `65d7468`).
+**Documentação:** ✅ `README.md` escrito (o que é, funcionalidades, como instalar, rodar e testar, e as decisões de design: camadas model/mapper/service/cli e o porquê). Sem `spec.md` separado, para não ter duas fontes descrevendo a mesma coisa. O PDF já saiu do repo (está no histórico, commit `3e302ec`).
