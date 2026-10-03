@@ -13,6 +13,59 @@ Roteiro de estudo para construir a Pokedex CLI da spec (`pokedex_mvp_spec.pdf`),
 
 ---
 
+## 📍 Onde paramos
+
+**Etapa 0 concluída.** Antes da Etapa 1, falta só abrir o VSCode dentro do WSL (ver abaixo).
+
+**Para retomar com o Claude:** "li o ROTEIRO.md, vamos seguir de onde paramos".
+
+---
+
+## Ambiente de desenvolvimento (WSL + VSCode)
+
+O projeto vive **dentro do Ubuntu (WSL)**, em `~/pokedex`, e o Python e o venv são os do Linux.
+
+### Abrir o projeto no VSCode
+Abra **sempre pelo Ubuntu**, não pelo caminho `\\wsl.localhost\...` no Windows:
+```bash
+cd ~/pokedex
+code .
+```
+- Se `code` não for encontrado, instale a extensão **WSL** (Microsoft) no VSCode. Outra opção: `Ctrl+Shift+P` → **WSL: Open Folder in WSL...**
+- Confira o canto inferior esquerdo: tem que aparecer **`WSL: Ubuntu`**.
+- `Ctrl+Shift+P` → **Python: Select Interpreter** → `.venv/bin/python`. Se a extensão Python pedir para instalar "no WSL", aceite.
+
+> **Por quê?** Se o VSCode do Windows abre a pasta por `\\wsl.localhost\...`, ele procura um `.venv\python.exe` do Windows. O nosso venv é Linux (`.venv/bin/python`), então aparece `.venv (broken)`. Aberto "dentro" do WSL, o VSCode roda um servidor no Linux e enxerga o Python certo.
+
+### Ativar o venv no terminal
+Em todo terminal novo, dentro de `~/pokedex`:
+```bash
+source .venv/bin/activate    # o prompt passa a mostrar (.venv)
+deactivate                   # para sair
+```
+O terminal integrado do VSCode costuma ativar sozinho depois que o interpretador está selecionado.
+
+### Recriar o ambiente do zero (outra máquina, venv apagado)
+```bash
+sudo apt install python3.14-venv     # só uma vez por máquina
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+```
+
+### Python × Node: tabela de consulta
+| Node / JS | Python |
+|---|---|
+| `npm` | `pip` |
+| registry npm | PyPI |
+| `package.json` / `package-lock.json` | `requirements.txt` (versões fixadas com `==`) ou `pyproject.toml` |
+| `node_modules/` | `.venv/` |
+| `npm install` | `pip install -r requirements.txt` |
+| instala local por padrão | instala **global** por padrão, por isso existe o venv |
+| atualiza o package.json sozinho | **não** atualiza o requirements.txt: você edita (ou usa `pip freeze`) |
+
+---
+
 ## Arquitetura (aonde vamos chegar)
 
 ```
@@ -69,6 +122,10 @@ git log --oneline
 **Para refletir:**
 - Por que não instalar o `requests` direto no Python do sistema?
 - Por que a pasta `.venv/` não vai para o git?
+
+**O que aprendemos:**
+- O Ubuntu vem sem `ensurepip`, por isso foi preciso o `apt install python3.14-venv`. O Python do sistema é usado pelo próprio Ubuntu (o `apt`, por exemplo), então ele fica "protegido" e um `pip install` global dá erro de *externally-managed-environment*.
+- Pedimos 2 pacotes e vieram 10: o resto são dependências transitivas (`urllib3`, `certifi`... vêm do `requests`). No `requirements.txt` fixamos só as **diretas** (`requests==2.34.2`, `pytest==9.1.1`).
 
 ---
 
