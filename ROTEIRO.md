@@ -15,7 +15,7 @@ Roteiro de estudo para construir a Pokedex CLI da spec (`pokedex_mvp_spec.pdf`, 
 
 ## 📍 Onde paramos
 
-**Etapa 7 concluída: MVP funcionando de ponta a ponta** (`python main.py`). Próximo: **Etapa 8** (testes com pytest).
+**Etapa 8 concluída:** MVP funcionando (`python main.py`) e 39 testes passando (`pytest -v`). Próximo: **Etapa 9** (opcional: README e melhorias).
 
 **Para retomar com o Claude:** "li o ROTEIRO.md, vamos seguir de onde paramos".
 
@@ -77,6 +77,7 @@ pip install -r requirements.txt
 pokedex/
 ├── main.py                 # ponto de entrada: só chama o menu
 ├── requirements.txt
+├── pyproject.toml          # configuração do pytest
 ├── .gitignore
 ├── ROTEIRO.md
 ├── pokedex/                # pacote da aplicação
@@ -91,8 +92,10 @@ pokedex/
 │   └── cli/
 │       └── menu.py         # menu, input do usuário, exibição
 └── tests/
+    ├── conftest.py         # fixtures: JSONs mínimos da API
     ├── test_mapper.py
-    └── test_pokeapi.py
+    ├── test_pokeapi.py
+    └── test_menu.py
 ```
 
 **Fluxo de dependências** (cada camada só conhece a de baixo):
@@ -335,15 +338,27 @@ curl -i https://pokeapi.co/api/v2/pokemon/naoexiste    # olhar o status
 ---
 
 ## Etapa 8: Testes com pytest
-- [ ] Concluída
+- [x] Concluída
 
 **Objetivo:** garantir que o comportamento não quebre quando mexermos no código.
 
 **Conceitos:** pytest, asserts, fixtures, mocks (`monkeypatch` / `unittest.mock`), testar sem depender da internet.
 
-**Arquivos:** `tests/test_mapper.py`, `tests/test_pokeapi.py`
+**Arquivos:** `pyproject.toml`, `tests/conftest.py`, `tests/test_mapper.py`, `tests/test_pokeapi.py`, `tests/test_menu.py`
 
-**Como verificar:** `pytest -v` todo verde.
+**Como verificar:** `pytest -v` todo verde (39 testes, ~0,1 s, sem internet).
+
+**O que aprendemos:**
+- `pyproject.toml` com `pythonpath = ["."]`: sem isso, o pytest não acha o pacote `pokedex`.
+- **Fixtures** (`@pytest.fixture`) entregam dados prontos para o teste, que só declara o nome no parâmetro. Ficam no `conftest.py`, que o pytest carrega sozinho. Cada teste recebe uma cópia nova, então pode alterar à vontade.
+- `pytest.raises(Erro) as info`: confere que a exceção foi lançada. `info.value.__cause__` confere o `raise ... from`.
+- `@pytest.mark.parametrize`: um teste, vários casos. A tabela de erros da Etapa 5 virou 8 casos com `ids` legíveis.
+- **Mock** (`unittest.mock.Mock`) substitui o `session.get`: `return_value` (resposta falsa), `side_effect` (lança exceção), `call_args` (com o que foi chamado), `assert_not_called()`.
+- **Fake** é uma classe nossa que finge ser outra (`FakeClient`). Funciona porque o `run(api)` aceita o cliente por parâmetro (injeção de dependência).
+- `monkeypatch.setattr("builtins.input", ...)` simula o usuário digitando, e `capsys.readouterr().out` captura o que foi impresso.
+- **Testar o teste:** plantamos bugs de propósito (tirar o ÷ 10, inverter a ordem dos `except`) e os testes falharam. Teste que nunca falha não prova nada.
+- Pegadinha vista ao vivo: o `.pyc` do `__pycache__` é validado por data e tamanho do arquivo. Uma edição automática no mesmo segundo e com o mesmo tamanho fez o Python usar o cache velho.
+- Não testamos a API real nem o `requests`: não são nossos, e teste que depende da internet atrapalha.
 
 ---
 

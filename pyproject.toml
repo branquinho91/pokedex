@@ -1,0 +1,4 @@
+[tool.pytest.ini_options]
+# Raiz do projeto no sys.path, para os testes conseguirem "import pokedex"
+pythonpath = ["."]
+testpaths = ["tests"]
