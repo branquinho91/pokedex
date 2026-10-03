@@ -15,7 +15,7 @@ Roteiro de estudo para construir a Pokedex CLI da spec (`pokedex_mvp_spec.pdf`, 
 
 ## 📍 Onde paramos
 
-**Etapa 8 concluída:** MVP funcionando (`python main.py`) e 39 testes passando (`pytest -v`). Próximo: **Etapa 9** (opcional: README e melhorias).
+**Etapa 8 concluída:** MVP funcionando (`python main.py`) e 39 testes passando (`pytest -v`). Etapa 9: `README.md` feito. Restam as melhorias opcionais.
 
 **Para retomar com o Claude:** "li o ROTEIRO.md, vamos seguir de onde paramos".
 
@@ -79,6 +79,7 @@ pokedex/
 ├── requirements.txt
 ├── pyproject.toml          # configuração do pytest
 ├── .gitignore
+├── README.md
 ├── ROTEIRO.md
 ├── pokedex/                # pacote da aplicação
 │   ├── __init__.py
@@ -367,4 +368,4 @@ curl -i https://pokeapi.co/api/v2/pokemon/naoexiste    # olhar o status
 
 Olhar o código com calma: o que ficou bom, o que refatorar. Ideias para depois: cache em memória, a lib `rich` para deixar a saída bonita, `typer`/`argparse` para comandos diretos (`pokedex search pikachu`), unidades imperiais (ft/in, lb) como `@property` calculada a partir de metro/kg (guardar uma unidade só).
 
-**Documentação:** escrever o `README.md` (o que é, funcionalidades, como instalar, rodar e testar, e as decisões de design: camadas model/mapper/service/cli e o porquê). Sem `spec.md` separado, para não ter duas fontes descrevendo a mesma coisa. O PDF já saiu do repo (está no histórico, commit `65d7468`).
+**Documentação:** ✅ `README.md` escrito (o que é, funcionalidades, como instalar, rodar e testar, e as decisões de design: camadas model/mapper/service/cli e o porquê). Sem `spec.md` separado, para não ter duas fontes descrevendo a mesma coisa. O PDF já saiu do repo (está no histórico, commit `65d7468`).
