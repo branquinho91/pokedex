@@ -82,25 +82,28 @@ pokedex/
 ├── pokedex/                # pacote da aplicação
 │   ├── __init__.py
 │   ├── models/
-│   │   └── pokemon.py      # dataclasses Pokemon/Stat + from_api()
+│   │   └── pokemon.py      # dataclasses Pokemon/Stat (só dados)
+│   ├── mappers/
+│   │   └── pokeapi.py      # JSON da PokeAPI -> Pokemon (pokemon_from_api)
 │   ├── services/
-│   │   ├── pokeapi.py      # PokeAPIClient: HTTP + JSON -> objetos
+│   │   ├── pokeapi.py      # PokeAPIClient: HTTP, timeout, chama o mapper
 │   │   └── errors.py       # exceções próprias
 │   └── cli/
 │       └── menu.py         # menu, input do usuário, exibição
 └── tests/
-    ├── test_pokemon.py
+    ├── test_mapper.py
     └── test_pokeapi.py
 ```
 
 **Fluxo de dependências** (cada camada só conhece a de baixo):
 
 ```
-cli/menu.py  ──usa──▶  services/pokeapi.py  ──usa──▶  models/pokemon.py
-(usuário)              (API / HTTP)                   (dados do domínio)
+cli/menu.py  ──usa──▶  services/pokeapi.py  ──usa──▶  mappers/pokeapi.py  ──usa──▶  models/pokemon.py
+(usuário)              (HTTP)                         (formato da API)              (dados do domínio)
 ```
 
-- O **model** não sabe que existe HTTP nem terminal.
+- O **model** não sabe que existe HTTP, terminal nem PokeAPI.
+- O **mapper** é o único que conhece o formato do JSON da PokeAPI.
 - O **service** não sabe que existe terminal (não usa `print` nem `input`).
 - A **CLI** não sabe montar URL nem ler JSON.
 
@@ -190,9 +193,9 @@ curl -i https://pokeapi.co/api/v2/pokemon/naoexiste    # olhar o status
 
 **Objetivo:** criar a representação própria de Pokémon, só com o que o app usa.
 
-**Conceitos:** classes, `@dataclass`, type hints, `@classmethod` como construtor alternativo (`from_api`), conversão de unidades, list comprehension.
+**Conceitos:** classes, `@dataclass`, type hints, `@classmethod` como construtor alternativo (`from_api`), conversão de unidades, list comprehension. Depois: padrão mapper.
 
-**Arquivos:** `pokedex/models/pokemon.py`, `__init__.py`s
+**Arquivos:** `pokedex/models/pokemon.py`, `pokedex/mappers/pokeapi.py`, `__init__.py`s
 
 **Como verificar:** no REPL, montar um `Pokemon` a partir de um JSON real.
 
@@ -208,6 +211,7 @@ curl -i https://pokeapi.co/api/v2/pokemon/naoexiste    # olhar o status
 - `__init__.py` marca a pasta como pacote, e é isso que permite `from pokedex.models.pokemon import Pokemon`.
 - Por que um model próprio: só os campos usados, conversão (÷ 10) feita uma vez, mudança da API corrigida num lugar só, e o editor pega erros de digitação.
 - Por que `from_api` no model: quem sabe montar um Pokemon é o Pokemon. E ele recebe um dict, então dá pra testar sem internet.
+- **Refatoração (decisão nossa):** extraímos o `from_api` para um **mapper**, `pokedex/mappers/pokeapi.py` → `pokemon_from_api(data)`. Agora o `Pokemon` é "puro" e não conhece a PokeAPI. O mapper é o único lugar que conhece o formato da API, e outra fonte (cache, banco) ganharia o seu próprio mapper sem mexer no model. Custo: um arquivo a mais. Continua testável sem internet, porque recebe um dict.
 
 ---
 
@@ -292,7 +296,7 @@ curl -i https://pokeapi.co/api/v2/pokemon/naoexiste    # olhar o status
 
 **Conceitos:** pytest, asserts, fixtures, mocks (`monkeypatch` / `unittest.mock`), testar sem depender da internet.
 
-**Arquivos:** `tests/test_pokemon.py`, `tests/test_pokeapi.py`
+**Arquivos:** `tests/test_mapper.py`, `tests/test_pokeapi.py`
 
 **Como verificar:** `pytest -v` todo verde.
 
