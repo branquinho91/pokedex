@@ -1,6 +1,6 @@
 # Roteiro: Pokedex CLI
 
-Roteiro de estudo para construir a Pokedex CLI da spec (`pokedex_mvp_spec.pdf`), uma etapa por vez.
+Roteiro de estudo para construir a Pokedex CLI da spec (`pokedex_mvp_spec.pdf`, removido do repo após o MVP; recuperar com `git show 65d7468:pokedex_mvp_spec.pdf > spec.pdf`), uma etapa por vez.
 
 **Como funciona cada etapa:**
 1. Explicação do objetivo e do porquê
@@ -352,4 +352,4 @@ curl -i https://pokeapi.co/api/v2/pokemon/naoexiste    # olhar o status
 
 Olhar o código com calma: o que ficou bom, o que refatorar. Ideias para depois: cache em memória, a lib `rich` para deixar a saída bonita, `typer`/`argparse` para comandos diretos (`pokedex search pikachu`), unidades imperiais (ft/in, lb) como `@property` calculada a partir de metro/kg (guardar uma unidade só).
 
-**Documentação:** escrever o `README.md` (o que é, como instalar, rodar e testar) e passar o essencial da spec para markdown (`docs/spec.md`). Decidir se o `pokedex_mvp_spec.pdf` sai do repo ou vai para `docs/`.
+**Documentação:** escrever o `README.md` (o que é, como instalar, rodar e testar) e passar o essencial da spec para markdown (`docs/spec.md`). O PDF já saiu do repo depois do MVP (está no histórico, commit `65d7468`).
