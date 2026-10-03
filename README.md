@@ -33,7 +33,7 @@ Stats
 Requer **Python 3.10+** (desenvolvido no 3.14) e acesso à internet.
 
 ```bash
-git clone <url-do-repo> pokedex
+git clone https://github.com/branquinho91/pokedex.git
 cd pokedex
 
 python3 -m venv .venv
