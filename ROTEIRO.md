@@ -15,7 +15,7 @@ Roteiro de estudo para construir a Pokedex CLI da spec (`pokedex_mvp_spec.pdf`),
 
 ## 📍 Onde paramos
 
-**Etapa 5 concluída.** Próximo: **Etapa 6** (menu CLI).
+**Etapa 6 concluída.** Próximo: **Etapa 7** (`main.py`, Ctrl+C e checklist ponta a ponta).
 
 **Para retomar com o Claude:** "li o ROTEIRO.md, vamos seguir de onde paramos".
 
@@ -282,7 +282,7 @@ curl -i https://pokeapi.co/api/v2/pokemon/naoexiste    # olhar o status
 ---
 
 ## Etapa 6: Menu CLI
-- [ ] Concluída
+- [x] Concluída
 
 **Objetivo:** a interface com o usuário.
 
@@ -291,6 +291,18 @@ curl -i https://pokeapi.co/api/v2/pokemon/naoexiste    # olhar o status
 **Arquivos:** `pokedex/cli/menu.py`
 
 **Partes:** menu principal, busca, listagem paginada (`[n]`, `[p]`, `[q]`) e exibição dos detalhes e stats.
+
+**O que aprendemos:**
+- Menu = `while True` + `return` como única saída. Em vez de `switch`, `if/elif/else`.
+- **Capturar na borda:** um `except PokedexError` só cobre os 7 erros. A CLI não conhece o `requests` e só mostra a mensagem.
+- Paginação em dois loops: `browse` busca e mostra; `_ask_navigation` insiste até um comando válido e devolve o novo offset ou `None` (padrão "valor ou None").
+- Funções `format_*` **devolvem texto** em vez de imprimir, então dá pra testar com `assert`.
+- f-string com formato: `:03d` (zeros à esquerda), `:<11` / `:>4` (alinhar à esquerda/direita). `//` é divisão inteira.
+- `api = api or PokeAPIClient()`: injeção de dependência simples (nos testes, passa um cliente falso). `dict.get(chave, padrão)` evita `KeyError`.
+- Ternário: `"x" if cond else ""` (em JS: `cond ? "x" : ""`).
+- **Extra (decisão nossa):** habilidade oculta. Nova `Ability(name, is_hidden)` no model, o mapper lê `is_hidden` e a CLI mostra `(hidden)`. O service não mudou. O model guarda o **dado** (`bool`) e a CLI decide a **apresentação**.
+- Tiramos as barrinhas dos stats: só os números, alinhados à direita.
+- Habilidades são poucas mesmo (1-2 normais + até 1 oculta). As centenas de itens são os **golpes** (`moves`), que a spec não pede.
 
 ---
 

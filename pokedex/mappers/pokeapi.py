@@ -3,7 +3,7 @@
 É o único lugar do app que conhece o formato do JSON da PokeAPI.
 Se a API mudar, a correção fica aqui.
 """
-from pokedex.models.pokemon import Pokemon, PokemonPage, PokemonSummary, Stat
+from pokedex.models.pokemon import Ability, Pokemon, PokemonPage, PokemonSummary, Stat
 
 
 def pokemon_from_api(data: dict) -> Pokemon:
@@ -15,7 +15,10 @@ def pokemon_from_api(data: dict) -> Pokemon:
         height_m=data["height"] / 10,
         weight_kg=data["weight"] / 10,
         types=[t["type"]["name"] for t in data["types"]],
-        abilities=[a["ability"]["name"] for a in data["abilities"]],
+        abilities=[
+            Ability(name=a["ability"]["name"], is_hidden=a["is_hidden"])
+            for a in data["abilities"]
+        ],
         stats=[Stat(name=s["stat"]["name"], value=s["base_stat"]) for s in data["stats"]],
     )
 

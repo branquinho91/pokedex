@@ -15,13 +15,21 @@ class Stat:
 
 
 @dataclass
+class Ability:
+    """Uma habilidade. Cada Pokémon tem no máximo uma oculta (hidden)."""
+
+    name: str
+    is_hidden: bool
+
+
+@dataclass
 class Pokemon:
     id: int
     name: str
     height_m: float  # em metros
     weight_kg: float  # em quilos
     types: list[str]
-    abilities: list[str]
+    abilities: list[Ability]
     stats: list[Stat]
 
 
