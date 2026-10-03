@@ -15,7 +15,7 @@ Roteiro de estudo para construir a Pokedex CLI da spec (`pokedex_mvp_spec.pdf`),
 
 ## 📍 Onde paramos
 
-**Etapa 6 concluída.** Próximo: **Etapa 7** (`main.py`, Ctrl+C e checklist ponta a ponta).
+**Etapa 7 concluída: MVP funcionando de ponta a ponta** (`python main.py`). Próximo: **Etapa 8** (testes com pytest).
 
 **Para retomar com o Claude:** "li o ROTEIRO.md, vamos seguir de onde paramos".
 
@@ -307,21 +307,30 @@ curl -i https://pokeapi.co/api/v2/pokemon/naoexiste    # olhar o status
 ---
 
 ## Etapa 7: `main.py` e teste ponta a ponta
-- [ ] Concluída
+- [x] Concluída
 
 **Objetivo:** o MVP rodando.
 
 **Conceitos:** `if __name__ == "__main__":`, ponto de entrada, `KeyboardInterrupt` (Ctrl+C).
 
 **Checklist manual:**
-- [ ] Buscar `pikachu` e `25` dá o mesmo resultado
-- [ ] Buscar `Pikachu ` (maiúscula e espaço) funciona
-- [ ] Buscar `xyz` mostra `Pokémon not found.`
-- [ ] Entrada vazia mostra mensagem de entrada inválida
-- [ ] Listar, navegar com `n`/`p` e sair com `q`
-- [ ] `p` na primeira página não quebra
-- [ ] Sem rede, aparece mensagem amigável (sem stack trace)
-- [ ] Ctrl+C sai sem stack trace
+- [x] Buscar `pikachu` e `25` dá o mesmo resultado
+- [x] Buscar `Pikachu ` (maiúscula e espaço) funciona
+- [x] Buscar `xyz` mostra `Pokémon not found.`
+- [x] Entrada vazia mostra mensagem de entrada inválida
+- [x] Listar, navegar com `n`/`p` e sair com `q`
+- [x] `p` na primeira página não quebra
+- [x] Sem rede, aparece mensagem amigável (sem stack trace)
+- [x] Ctrl+C sai sem stack trace
+- [x] Ctrl+D sai sem stack trace (extra)
+
+**O que aprendemos:**
+- `KeyboardInterrupt` (Ctrl+C) herda direto de `BaseException`, **não** de `Exception`. É de propósito: um `except Exception` não engole o Ctrl+C. Para tratar, tem que pedir explicitamente.
+- `EOFError` (Ctrl+D): o `input()` não tem mais o que ler.
+- Os dois são tratados no `main.py`, a borda mais externa: um `try` só pega o Ctrl+C de qualquer `input()`, porque a exceção sobe até lá.
+- `if __name__ == "__main__":` roda só quando o arquivo é executado, não quando é importado. Assim `import main` num teste não abre o menu.
+- Checklist automatizado: "sem rede" simulado com `HTTPS_PROXY` para uma porta fechada, e Ctrl+C com `SIGINT` real no processo.
+- `rascunho.py` apagado (continua no histórico, commit `fb386be`).
 
 ---
 
