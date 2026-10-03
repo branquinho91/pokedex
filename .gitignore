@@ -7,6 +7,3 @@ __pycache__/
 
 # Cache do pytest
 .pytest_cache/
-
-# Metadado que o Windows grava em arquivos baixados
-*:Zone.Identifier
