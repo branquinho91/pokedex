@@ -15,7 +15,7 @@ Roteiro de estudo para construir a Pokedex CLI da spec (`pokedex_mvp_spec.pdf`),
 
 ## 📍 Onde paramos
 
-**Etapa 2 concluída.** Próximo: **Etapa 3** (model `Pokemon`).
+**Etapa 3 concluída.** Próximo: **Etapa 4** (service `PokeAPIClient`).
 
 **Para retomar com o Claude:** "li o ROTEIRO.md, vamos seguir de onde paramos".
 
@@ -186,7 +186,7 @@ curl -i https://pokeapi.co/api/v2/pokemon/naoexiste    # olhar o status
 ---
 
 ## Etapa 3: Modelo `Pokemon`
-- [ ] Concluída
+- [x] Concluída
 
 **Objetivo:** criar a representação própria de Pokémon, só com o que o app usa.
 
@@ -199,6 +199,15 @@ curl -i https://pokeapi.co/api/v2/pokemon/naoexiste    # olhar o status
 **Para refletir:**
 - Por que não usar o dict da API direto pelo app inteiro?
 - Por que `from_api` fica no model, e não no service?
+
+**O que aprendemos:**
+- **Decorator** é uma função que recebe uma função/classe e devolve uma versão turbinada. `@dataclass class X` é o mesmo que `X = dataclass(X)`.
+- `@dataclass` gera `__init__`, `__repr__` (o print bonito) e `__eq__` (comparar por valor) a partir dos campos declarados.
+- **Type hints** (`name: str`, `list[Stat]`) não são checados em execução. Servem pro editor (autocompletar, sublinhar erro), pra documentação, e o dataclass usa pra descobrir os campos.
+- `@classmethod` recebe `cls` (a classe), não `self` (a instância). `from_api` é um **construtor alternativo**: traduz o formato da API para o nosso. Em JS seria `static fromApi()`.
+- `__init__.py` marca a pasta como pacote, e é isso que permite `from pokedex.models.pokemon import Pokemon`.
+- Por que um model próprio: só os campos usados, conversão (÷ 10) feita uma vez, mudança da API corrigida num lugar só, e o editor pega erros de digitação.
+- Por que `from_api` no model: quem sabe montar um Pokemon é o Pokemon. E ele recebe um dict, então dá pra testar sem internet.
 
 ---
 
