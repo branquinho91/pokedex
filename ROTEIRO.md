@@ -15,7 +15,7 @@ Roteiro de estudo para construir a Pokedex CLI da spec (`pokedex_mvp_spec.pdf`),
 
 ## 📍 Onde paramos
 
-**Etapa 0 concluída.** Antes da Etapa 1, falta só abrir o VSCode dentro do WSL (ver abaixo).
+**Etapa 1 concluída.** Próximo: **Etapa 2** (primeiro script "sujo").
 
 **Para retomar com o Claude:** "li o ROTEIRO.md, vamos seguir de onde paramos".
 
@@ -130,7 +130,7 @@ git log --oneline
 ---
 
 ## Etapa 1: Explorar a API na mão
-- [ ] Concluída
+- [x] Concluída
 
 **Objetivo:** entender o formato dos dados antes de escrever código.
 
@@ -147,6 +147,14 @@ curl -i https://pokeapi.co/api/v2/pokemon/naoexiste    # olhar o status
 - Onde ficam os tipos? E os stats? Por que estão "aninhados" desse jeito?
 - Em que unidade vêm `height` e `weight`?
 - Para que servem os campos `next` e `previous` da listagem?
+
+**O que aprendemos:**
+- O JSON do Pikachu tem ~15.500 linhas formatado, 93% delas são `moves`. A gente usa uma fatia pequena, por isso o model vai filtrar.
+- JSON é sempre **texto**: `json.loads` transforma em `dict`/`list`, `json.dumps` volta para string. No `requests`: `resp.text` (str) × `resp.json()` (dict).
+- `types` e `stats` são **listas de objetos aninhados** no padrão "nome + link": `d["types"][0]["type"]["name"]`, `d["stats"][0]["base_stat"]`. Lista porque pode ter 1 ou 2 tipos; `slot` dá a ordem.
+- `height` vem em **decímetros** e `weight` em **hectogramas**: os dois ÷ 10 viram metro e kg (Pikachu: 4 → 0,4 m, 60 → 6 kg).
+- Inexistente dá **404** com corpo `{"status":404,"message":"Not Found"}`. O `requests` **não** lança erro sozinho com 404, a gente trata na Etapa 5.
+- Paginação: `count` (total), `offset` (quantos pular), `limit` (por página), `next`/`previous` (URL pronta, `null` quando não existe). A listagem só traz `name` + `url`.
 
 ---
 
@@ -272,4 +280,6 @@ curl -i https://pokeapi.co/api/v2/pokemon/naoexiste    # olhar o status
 ## Etapa 9: Revisão e próximos passos (opcional)
 - [ ] Concluída
 
-Olhar o código com calma: o que ficou bom, o que refatorar. Ideias para depois: cache em memória, a lib `rich` para deixar a saída bonita, `typer`/`argparse` para comandos diretos (`pokedex search pikachu`).
+Olhar o código com calma: o que ficou bom, o que refatorar. Ideias para depois: cache em memória, a lib `rich` para deixar a saída bonita, `typer`/`argparse` para comandos diretos (`pokedex search pikachu`), unidades imperiais (ft/in, lb) como `@property` calculada a partir de metro/kg (guardar uma unidade só).
+
+**Documentação:** escrever o `README.md` (o que é, como instalar, rodar e testar) e passar o essencial da spec para markdown (`docs/spec.md`). Decidir se o `pokedex_mvp_spec.pdf` sai do repo ou vai para `docs/`.
