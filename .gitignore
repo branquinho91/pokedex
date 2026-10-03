@@ -1,0 +1,12 @@
+# Ambiente virtual: cada máquina cria o seu a partir do requirements.txt
+.venv/
+
+# Bytecode que o Python gera sozinho ao importar módulos
+__pycache__/
+*.pyc
+
+# Cache do pytest
+.pytest_cache/
+
+# Metadado que o Windows grava em arquivos baixados
+*:Zone.Identifier
