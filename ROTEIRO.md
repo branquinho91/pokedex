@@ -15,7 +15,7 @@ Roteiro de estudo para construir a Pokedex CLI da spec (`pokedex_mvp_spec.pdf`),
 
 ## 📍 Onde paramos
 
-**Etapa 4 concluída.** Próximo: **Etapa 5** (tratamento de erros).
+**Etapa 5 concluída.** Próximo: **Etapa 6** (menu CLI).
 
 **Para retomar com o Claude:** "li o ROTEIRO.md, vamos seguir de onde paramos".
 
@@ -246,7 +246,7 @@ curl -i https://pokeapi.co/api/v2/pokemon/naoexiste    # olhar o status
 ---
 
 ## Etapa 5: Tratamento de erros
-- [ ] Concluída
+- [x] Concluída
 
 **Objetivo:** transformar falhas técnicas em erros que fazem sentido para o domínio.
 
@@ -257,6 +257,7 @@ curl -i https://pokeapi.co/api/v2/pokemon/naoexiste    # olhar o status
 **Mapeamento:**
 | Situação | Exceção do requests/Python | Nossa exceção |
 |---|---|---|
+| Entrada vazia ou com caracteres inválidos | (validado antes do request) | `InvalidInputError` |
 | Pokémon inexistente | status 404 | `PokemonNotFoundError` |
 | Timeout | `requests.Timeout` | `APITimeoutError` |
 | Sem rede / API fora | `requests.ConnectionError` | `APIUnavailableError` |
@@ -265,6 +266,18 @@ curl -i https://pokeapi.co/api/v2/pokemon/naoexiste    # olhar o status
 
 **Para refletir:**
 - Por que a CLI não deveria capturar `requests.Timeout` diretamente?
+
+**O que aprendemos:**
+- Exceção própria é só uma classe que herda de `Exception` (herança = `extends`). A docstring já basta como corpo.
+- **Hierarquia:** `except PokedexError` pega ela e todas as filhas. A CLI vai precisar de um `except` só. O `except` captura pelo **tipo**, não pela mensagem.
+- `APIError` guarda `status_code` (via `super().__init__(message)` + atributo), e o `get_pokemon` decide "404 → `PokemonNotFoundError`" sem ler texto. O `_get` é genérico, então quem interpreta o 404 é quem conhece o contexto.
+- `raise NossoErro(...) from err`: o usuário vê a mensagem amigável e o erro original fica em `__cause__` para debug. `raise` sozinho relança o mesmo erro.
+- **Ordem dos `except`:** do mais específico pro mais genérico. `ConnectTimeout` é filho de `Timeout` **e** de `ConnectionError`, por isso o `Timeout` vem primeiro. `RequestException` por último, como rede de segurança.
+- A entrada é validada antes do request (`re.compile` + `fullmatch`): vazio e `pika/chu` viram `InvalidInputError`.
+- O mapper continua "inocente" (lança `KeyError`) e o service traduz para `InvalidResponseError`.
+- Testado com servidores falsos locais: mudo (timeout), porta fechada (fora), 500, HTML e JSON torto.
+- Por que a CLI não captura `requests.Timeout`: cada lib tem suas exceções (`httpx.TimeoutException`...). Se a CLI conhecesse o `requests`, trocar a lib quebraria a CLI. O service esconde os detalhes (encapsulamento / não vazar a abstração).
+- Mensagens ao usuário em inglês, como o menu da spec. Comentários em português.
 
 ---
 
